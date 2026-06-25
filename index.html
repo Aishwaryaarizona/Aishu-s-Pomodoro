@@ -2,1096 +2,768 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#faf6ee"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <title>Aishu's Focus Garden</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  :root {
-    --mitti: #c4845a;
-    --mitti-light: #dba880;
-    --mitti-pale: #f5ede4;
-    --mitti-deep: #8a4e2a;
-    --clay: #d4956a;
-    --clay-pale: #faf0e8;
-    --ochre: #c8903a;
-    --ochre-pale: #fdf5e0;
-    --rust: #b85a3a;
-    --rust-pale: #faeae4;
-    --sand: #e8d4b0;
-    --sand-pale: #fdf8f0;
-    --haldi: #d4a830;
-    --haldi-pale: #fdf5d8;
-    --cream: #faf4ec;
-    --bark: #5a2e18;
-    --text: #3a1e0e;
-    --text-mid: #7a4a2a;
-    --text-soft: #a87858;
-    --white: #fffbf5;
-    --border: rgba(90, 46, 24, 0.12);
-  }
+:root{
+  --mitti:#c4845a; --mitti-light:#dba880; --mitti-pale:#f5ede4; --mitti-deep:#8a4e2a;
+  --ochre:#c8903a; --ochre-pale:#fdf5e0;
+  --rust:#b85a3a;  --rust-pale:#faeae4;
+  --sand:#e8d4b0;  --sand-pale:#fdf8f0;
+  --haldi:#d4a830; --haldi-pale:#fdf5d8;
+  --cream:#faf6ee; --bark:#5a2e18;
+  --text:#3a1e0e;  --text-mid:#7a4a2a; --text-soft:#a87858;
+  --white:#fffbf5; --border:rgba(90,46,24,0.12);
+  --r:18px;
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+html{height:100%}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--cream);color:var(--text);
+  min-height:100dvh; overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+}
 
-  /* ── Petal SVG background ── */
-  .petal-bg {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .petal-bg svg { width: 100%; height: 100%; }
+/* ── Fixed backgrounds ── */
+.petal-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.petal-bg svg{width:100%;height:100%}
+#mogra-canvas{position:fixed;inset:0;pointer-events:none;z-index:5}
 
-  /* ── Header ── */
-  header {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 2.5rem 1rem 1.5rem;
-  }
-  .logo-blossom {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 0.5rem;
-  }
-  .logo-blossom svg { width: 36px; height: 36px; }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    font-weight: 400;
-    color: var(--bark);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-  }
-  header h1 em {
-    font-style: italic;
-    color: var(--mitti);
-  }
-  header p {
-    margin-top: 0.4rem;
-    font-size: 0.85rem;
-    color: var(--text-soft);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+/* ── Page wrapper ── */
+.page{
+  position:relative;z-index:10;
+  display:flex;flex-direction:column;
+  min-height:100dvh;
+  padding-top:env(safe-area-inset-top,0);
+  padding-left:env(safe-area-inset-left,0);
+  padding-right:env(safe-area-inset-right,0);
+}
 
-  /* ── Main layout ── */
-  .layout {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr min(420px, 100%) 1fr;
-    gap: 0 2rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1.5rem 3rem;
-    align-items: start;
-  }
-  @media (max-width: 800px) {
-    .layout { grid-template-columns: 1fr; }
-    .chai-panel { order: 3; }
-    .phase-guide { order: 2; }
-  }
+/* ── Header ── */
+header{text-align:center;padding:1.4rem 1rem 0.6rem;flex-shrink:0}
+.logo-blossom{display:inline-flex;align-items:center;gap:8px;margin-bottom:0.3rem}
+.logo-blossom svg{width:28px;height:28px}
+header h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.4rem,5vw,2.4rem);
+  font-weight:400;color:var(--bark);line-height:1.15
+}
+header h1 em{font-style:italic;color:var(--mitti)}
+header p{margin-top:0.25rem;font-size:0.7rem;color:var(--text-soft);letter-spacing:.1em;text-transform:uppercase}
 
-  /* ── Timer card ── */
-  .timer-card {
-    grid-column: 2;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 2rem 1.75rem 1.75rem;
-    box-shadow: 0 4px 32px rgba(107, 83, 68, 0.08);
-    position: relative;
-    overflow: hidden;
-  }
-  .timer-card::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--mitti-light), var(--ochre), var(--rust));
-    border-radius: 24px 24px 0 0;
-  }
+/* ── Content ── */
+.content{
+  flex:1;width:100%;max-width:440px;
+  margin:0 auto;padding:0 0.9rem;
+  padding-bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;gap:0.75rem;
+}
 
-  .phase-strip {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 1.5rem;
-    justify-content: center;
+/* ── Wide layout ── */
+@media(min-width:860px){
+  .content{
+    max-width:1040px;
+    display:grid;
+    grid-template-columns:210px 1fr 210px;
+    gap:0 1.25rem;
+    align-items:start;
+    padding:0 1.5rem calc(2rem + env(safe-area-inset-bottom,0px));
   }
-  .phase-pill {
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    border: 1px solid transparent;
-    transition: all 0.3s;
-    cursor: pointer;
-    color: var(--text-soft);
-    background: var(--mitti-pale);
-    border-color: var(--mitti-light);
-  }
-  .phase-pill.active { transform: scale(1.05); }
-  .phase-pill[data-phase="0"].active { background: var(--sand-pale); color: var(--mitti-deep); border-color: var(--sand); }
-  .phase-pill[data-phase="1"].active { background: var(--ochre-pale); color: #5a3800; border-color: var(--ochre); }
-  .phase-pill[data-phase="2"].active { background: var(--haldi-pale); color: #5a3a00; border-color: var(--haldi); }
-  .phase-pill[data-phase="3"].active { background: var(--rust-pale); color: var(--rust); border-color: var(--rust); }
+  .timer-card {grid-column:2;grid-row:1/3}
+  .chai-panel {grid-column:1;grid-row:1}
+  .phase-guide{grid-column:3;grid-row:1}
+  .collapsible-header{display:none!important}
+  .collapsible-body{display:block!important;padding:0.9rem!important;border-top:none}
+  .side-card{position:sticky;top:1rem}
+}
 
-  .phase-display {
-    text-align: center;
-    margin-bottom: 1.25rem;
-  }
-  .phase-emoji {
-    font-size: 2.5rem;
-    line-height: 1;
-    display: block;
-    margin-bottom: 0.4rem;
-    animation: float 3s ease-in-out infinite;
-  }
-  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+/* ── Card shell ── */
+.card-shell{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:0 2px 18px rgba(90,46,24,.07);
+  overflow:hidden;
+}
 
-  .phase-label-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    color: var(--bark);
-    font-weight: 400;
-  }
-  .phase-meta { font-size: 0.75rem; color: var(--text-soft); margin-top: 2px; }
+/* ── Timer card ── */
+.timer-card{padding:1.1rem 1rem 1rem;position:relative}
+.timer-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--mitti-light),var(--ochre),var(--rust))
+}
 
-  /* Ring */
-  .ring-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 0 auto 1.5rem;
-  }
-  .ring-container svg { transform: rotate(-90deg); }
-  .ring-bg-track { fill: none; stroke: #e8d4b8; stroke-width: 10; }
-  .ring-progress {
-    fill: none;
-    stroke-width: 10;
-    stroke-linecap: round;
-    stroke-dasharray: 565.49;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1), stroke 0.4s;
-  }
-  .time-center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .time-big {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    font-weight: 400;
-    color: var(--bark);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .time-sub { font-size: 0.7rem; color: var(--text-soft); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+/* Pills */
+.phase-strip{display:flex;gap:5px;margin-bottom:0.9rem;justify-content:center;flex-wrap:wrap}
+.phase-pill{
+  padding:5px 10px;border-radius:999px;font-size:10px;font-weight:500;
+  border:1px solid var(--mitti-light);background:var(--mitti-pale);color:var(--text-soft);
+  cursor:pointer;transition:all .22s;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  min-height:30px;display:flex;align-items:center;
+}
+.phase-pill.active{transform:scale(1.07)}
+.phase-pill[data-phase="0"].active{background:var(--sand-pale);color:var(--mitti-deep);border-color:var(--sand)}
+.phase-pill[data-phase="1"].active{background:var(--ochre-pale);color:#5a3800;border-color:var(--ochre)}
+.phase-pill[data-phase="2"].active{background:var(--haldi-pale);color:#5a3a00;border-color:var(--haldi)}
+.phase-pill[data-phase="3"].active{background:var(--rust-pale);color:var(--rust);border-color:var(--rust)}
 
-  /* Controls */
-  .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 1.25rem; }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 22px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: transparent;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.01em;
-  }
-  .btn:hover { background: var(--mitti-pale); border-color: var(--mitti); }
-  .btn-main {
-    background: var(--bark);
-    color: var(--white);
-    border-color: var(--bark);
-  }
-  .btn-main:hover { background: var(--mitti-deep); border-color: var(--mitti-deep); }
+/* Phase display */
+.phase-display{text-align:center;margin-bottom:0.8rem}
+.phase-emoji{font-size:2rem;line-height:1;display:block;margin-bottom:.25rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.phase-label-text{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--bark)}
+.phase-meta{font-size:.7rem;color:var(--text-soft);margin-top:2px}
 
-  /* Segment track */
-  .segment-track {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  .seg {
-    text-align: center;
-    padding: 8px 4px 6px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--cream);
-    font-size: 10px;
-    color: var(--text-soft);
-    transition: all 0.3s;
-  }
-  .seg-icon { font-size: 1.1rem; display: block; margin-bottom: 3px; }
-  .seg-name { display: block; font-weight: 500; margin-bottom: 1px; }
-  .seg-dur { font-size: 9px; opacity: 0.7; }
-  .seg.seg-done-0 { background: var(--sand-pale); color: var(--mitti-deep); border-color: var(--sand); }
-  .seg.seg-done-1 { background: var(--ochre-pale); color: #5a3800; border-color: var(--ochre); }
-  .seg.seg-done-2 { background: var(--haldi-pale); color: #5a3a00; border-color: var(--haldi); }
-  .seg.seg-done-3 { background: var(--rust-pale); color: var(--rust); border-color: var(--rust); }
-  .seg.seg-current { box-shadow: 0 0 0 2px var(--mitti); }
+/* Ring */
+.ring-container{position:relative;width:180px;height:180px;margin:0 auto 1rem}
+.ring-container svg{transform:rotate(-90deg)}
+.ring-bg-track{fill:none;stroke:#e8d4b8;stroke-width:10}
+.ring-progress{fill:none;stroke-width:10;stroke-linecap:round;stroke-dasharray:565.49;stroke-dashoffset:0;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1),stroke .4s}
+.time-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.time-big{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:400;color:var(--bark);line-height:1;letter-spacing:-.02em}
+.time-sub{font-size:.62rem;color:var(--text-soft);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
 
-  .cycle-badge {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.75rem;
-    color: var(--text-soft);
-  }
-  .cycle-badge span {
-    font-weight: 500;
-    color: var(--bark);
-  }
+/* Controls */
+.controls{display:flex;gap:7px;justify-content:center;margin-bottom:.9rem}
+.btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:10px 18px;border-radius:999px;
+  border:1px solid var(--border);background:transparent;
+  font-family:'Inter',sans-serif;font-size:.82rem;font-weight:500;color:var(--text);
+  cursor:pointer;transition:all .18s;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  min-height:44px;min-width:44px;white-space:nowrap;
+}
+.btn:active{opacity:.72;transform:scale(.96)}
+.btn-main{background:var(--bark);color:var(--white);border-color:var(--bark)}
+.btn-main:hover{background:var(--mitti-deep)}
 
-  /* sound toggle */
-  .snd-row {
-    text-align: center;
-    margin-top: 0.75rem;
-    font-size: 0.75rem;
-    color: var(--text-soft);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-  }
-  .snd-row:hover { color: var(--bark); }
+/* Segments */
+.segment-track{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.seg{text-align:center;padding:7px 2px 5px;border-radius:9px;border:1px solid var(--border);background:var(--cream);font-size:9px;color:var(--text-soft);transition:all .25s}
+.seg-icon{font-size:.95rem;display:block;margin-bottom:2px}
+.seg-name{display:block;font-weight:500;margin-bottom:1px}
+.seg-dur{font-size:8px;opacity:.7}
+.seg.seg-done-0{background:var(--sand-pale);color:var(--mitti-deep);border-color:var(--sand)}
+.seg.seg-done-1{background:var(--ochre-pale);color:#5a3800;border-color:var(--ochre)}
+.seg.seg-done-2{background:var(--haldi-pale);color:#5a3a00;border-color:var(--haldi)}
+.seg.seg-done-3{background:var(--rust-pale);color:var(--rust);border-color:var(--rust)}
+.seg.seg-current{box-shadow:0 0 0 2px var(--mitti)}
 
-  /* ── Chai panel ── */
-  .chai-panel {
-    grid-column: 1;
-    grid-row: 1;
-    padding-top: 0.5rem;
-  }
-  .chai-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 16px rgba(107,83,68,0.06);
-    position: sticky;
-    top: 1.5rem;
-  }
-  .chai-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    color: var(--bark);
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .chai-cup {
-    display: flex;
-    justify-content: center;
-    margin: 0.75rem 0;
-  }
-  /* Steam animation */
-  .steam-line {
-    animation: steam 2.5s ease-in-out infinite;
-    transform-origin: bottom center;
-  }
-  .steam-line:nth-child(2) { animation-delay: 0.6s; }
-  .steam-line:nth-child(3) { animation-delay: 1.2s; }
-  @keyframes steam {
-    0% { opacity: 0; transform: translateY(0) scaleX(1); }
-    40% { opacity: 0.7; }
-    100% { opacity: 0; transform: translateY(-18px) scaleX(1.4); }
-  }
+.cycle-badge{text-align:center;margin-top:.65rem;font-size:.7rem;color:var(--text-soft)}
+.cycle-badge span{font-weight:500;color:var(--bark)}
+.snd-row{
+  text-align:center;margin-top:.55rem;font-size:.7rem;color:var(--text-soft);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:36px;
+}
 
-  .chai-affirmation {
-    text-align: center;
-    font-size: 0.78rem;
-    color: var(--text-soft);
-    font-style: italic;
-    font-family: 'Playfair Display', serif;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-    min-height: 2.5em;
-    transition: opacity 0.5s;
-  }
-  .chai-recipe-toggle {
-    font-size: 0.75rem;
-    color: var(--mitti-deep);
-    text-align: center;
-    cursor: pointer;
-    letter-spacing: 0.03em;
-    font-weight: 500;
-  }
-  .chai-recipe-toggle:hover { text-decoration: underline; }
+/* ── Collapsible side cards ── */
+.collapsible-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1rem;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.collapsible-title{
+  font-family:'Playfair Display',serif;
+  font-size:.9rem;color:var(--bark);
+  display:flex;align-items:center;gap:7px;
+}
+.c-arrow{font-size:.65rem;color:var(--text-soft);transition:transform .28s;display:inline-block}
+.collapsible-header.open .c-arrow{transform:rotate(180deg)}
+.collapsible-body{display:none;padding:0 1rem 1rem;border-top:1px solid var(--border)}
+.collapsible-body.open{display:block}
 
-  .chai-recipe {
-    display: none;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
-  }
-  .chai-recipe.open { display: block; }
-  .chai-recipe h4 {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-soft);
-    margin-bottom: 0.5rem;
-  }
-  .chai-recipe ul {
-    list-style: none;
-    font-size: 0.8rem;
-    color: var(--text-mid);
-    line-height: 1.9;
-  }
-  .chai-recipe ul li::before { content: "✦ "; color: var(--ochre); font-size: 0.65rem; }
+/* ── Chai body ── */
+.chai-cup{display:flex;justify-content:center;margin:.65rem 0 .45rem}
+.steam-line{animation:steam 2.5s ease-in-out infinite;transform-origin:bottom center}
+.steam-line:nth-child(2){animation-delay:.6s}
+.steam-line:nth-child(3){animation-delay:1.2s}
+@keyframes steam{0%{opacity:0;transform:translateY(0) scaleX(1)}40%{opacity:.7}100%{opacity:0;transform:translateY(-18px) scaleX(1.4)}}
+.chai-affirmation{
+  text-align:center;font-size:.74rem;color:var(--text-soft);
+  font-style:italic;font-family:'Playfair Display',serif;
+  line-height:1.55;margin-bottom:.55rem;min-height:2.3em;transition:opacity .5s
+}
+.chai-recipe-toggle{
+  font-size:.71rem;color:var(--mitti-deep);text-align:center;
+  cursor:pointer;font-weight:500;touch-action:manipulation;
+}
+.chai-recipe{display:none;margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border)}
+.chai-recipe.open{display:block}
+.chai-recipe h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-soft);margin-bottom:.35rem}
+.chai-recipe ul{list-style:none;font-size:.76rem;color:var(--text-mid);line-height:1.85}
+.chai-recipe ul li::before{content:"✦ ";color:var(--ochre);font-size:.6rem}
 
-  /* ── Phase guide (right panel) ── */
-  .phase-guide {
-    grid-column: 3;
-    grid-row: 1;
-    padding-top: 0.5rem;
-  }
-  .guide-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 16px rgba(107,83,68,0.06);
-    position: sticky;
-    top: 1.5rem;
-  }
-  .guide-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    color: var(--bark);
-    margin-bottom: 1rem;
-  }
-  .guide-item {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin-bottom: 0.9rem;
-    padding-bottom: 0.9rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .guide-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .guide-dot {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-  .g0 { background: var(--sand-pale); }
-  .g1 { background: var(--ochre-pale); }
-  .g2 { background: var(--haldi-pale); }
-  .g3 { background: var(--rust-pale); }
-  .guide-text h4 { font-size: 0.82rem; font-weight: 500; color: var(--bark); margin-bottom: 2px; }
-  .guide-text p { font-size: 0.75rem; color: var(--text-soft); line-height: 1.5; }
-  .guide-text span { font-size: 0.7rem; font-weight: 500; color: var(--text-soft); letter-spacing: 0.04em; }
+/* ── Guide body ── */
+.guide-item{display:flex;gap:9px;align-items:flex-start;margin-bottom:.75rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.guide-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.guide-dot{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.g0{background:var(--sand-pale)}.g1{background:var(--ochre-pale)}.g2{background:var(--haldi-pale)}.g3{background:var(--rust-pale)}
+.guide-text h4{font-size:.78rem;font-weight:500;color:var(--bark);margin-bottom:2px}
+.guide-text p{font-size:.7rem;color:var(--text-soft);line-height:1.45}
+.guide-text span{font-size:.66rem;font-weight:500;color:var(--text-soft);letter-spacing:.04em}
 
-  /* ── Falling mogra canvas ── */
-  #mogra-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  /* ── Footer ── */
-  footer {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.72rem;
-    color: var(--text-soft);
-    border-top: 1px solid var(--border);
-  }
-  footer em { font-style: italic; font-family: 'Playfair Display', serif; }
+/* ── Footer ── */
+footer{
+  position:relative;z-index:10;text-align:center;
+  padding:.75rem 1rem;
+  padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px));
+  font-size:.66rem;color:var(--text-soft);border-top:1px solid var(--border);
+}
+footer em{font-style:italic;font-family:'Playfair Display',serif}
 </style>
 </head>
 <body>
 
-<!-- Mogra on mitti (Indian clay earth) background -->
+<!-- ══ Garden background SVG ══ -->
 <div class="petal-bg" aria-hidden="true">
-  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="skygrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#e8c8a0"/>
-        <stop offset="45%" stop-color="#f0dcc0"/>
-        <stop offset="100%" stop-color="#faf4ec"/>
-      </linearGradient>
-      <!-- textured mitti grain overlay -->
-      <filter id="grain">
-        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-        <feColorMatrix type="saturate" values="0"/>
-        <feBlend in="SourceGraphic" mode="multiply" result="blend"/>
-        <feComposite in="blend" in2="SourceGraphic" operator="in"/>
-      </filter>
-      <!-- Mogra flower: 8 rounded white petals + yellow center -->
-      <g id="mogra-lg">
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(0)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(45)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(90)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(135)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(180)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(225)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(270)"/>
-        <ellipse rx="11" ry="5" fill="white" opacity="0.95" transform="rotate(315)"/>
-        <circle r="5" fill="#f5e060"/>
-        <circle r="3" fill="#e8c820"/>
-      </g>
-      <g id="mogra-md">
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(0)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(45)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(90)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(135)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(180)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(225)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(270)"/>
-        <ellipse rx="8" ry="3.5" fill="white" opacity="0.95" transform="rotate(315)"/>
-        <circle r="3.5" fill="#f5e060"/>
-        <circle r="2" fill="#e8c820"/>
-      </g>
-      <g id="mogra-sm">
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(0)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(45)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(90)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(135)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(180)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(225)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(270)"/>
-        <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.9" transform="rotate(315)"/>
-        <circle r="2.5" fill="#f5e060"/>
-        <circle r="1.4" fill="#e8c820"/>
-      </g>
-      <g id="mogra-bud">
-        <ellipse rx="4" ry="7" fill="white" opacity="0.85"/>
-        <ellipse rx="2" ry="4" fill="#c8d8a0" opacity="0.6" transform="translateY(-2)"/>
-      </g>
-    </defs>
-
-    <!-- Warm mitti earth wash -->
-    <rect width="1440" height="900" fill="url(#skygrad)" opacity="1"/>
-    <!-- Subtle texture overlay -->
-    <rect width="1440" height="900" fill="#c89060" opacity="0.06" filter="url(#grain)"/>
-
-    <!-- Soft warm haze clouds (muted ochre-white) -->
-    <g opacity="0.30" fill="#f5ead8">
-      <ellipse cx="200" cy="120" rx="90" ry="35"/>
-      <ellipse cx="260" cy="110" rx="70" ry="30"/>
-      <ellipse cx="140" cy="115" rx="60" ry="28"/>
-      <ellipse cx="1100" cy="90" rx="100" ry="38"/>
-      <ellipse cx="1170" cy="80" rx="75" ry="30"/>
-      <ellipse cx="1030" cy="86" rx="65" ry="28"/>
-      <ellipse cx="650" cy="60" rx="80" ry="28"/>
-      <ellipse cx="720" cy="52" rx="60" ry="24"/>
-      <ellipse cx="590" cy="56" rx="55" ry="22"/>
-    </g>
-
-    <!-- ══ Cracked mitti earth texture lines (subtle) ══ -->
-    <g opacity="0.07" stroke="#8a5030" stroke-width="1" fill="none">
-      <path d="M0,750 Q120,740 200,760 Q320,775 440,755 Q560,735 680,758 Q800,780 920,760 Q1040,742 1160,758 Q1280,774 1440,755"/>
-      <path d="M100,820 Q200,808 300,818 Q400,828 500,815"/>
-      <path d="M900,800 Q1000,790 1100,802 Q1200,814 1300,800"/>
-      <path d="M0,850 Q200,838 400,848 Q600,858 800,845 Q1000,832 1200,844 Q1320,852 1440,840"/>
-    </g>
-
-    <!-- ══ TOP-LEFT: Mogra vine cascade ══ -->
-    <g opacity="0.30">
-      <path d="M-10,0 Q30,60 60,120 Q90,180 130,240 Q170,300 200,360" stroke="#8a9a5a" stroke-width="2" fill="none"/>
-      <path d="M60,120 Q40,140 20,155" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M130,240 Q100,250 80,270" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M200,360 Q230,340 255,330" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M60,120 Q85,110 100,95" stroke="#8a9a5a" stroke-width="1.2" fill="none"/>
-      <path d="M130,240 Q155,225 170,210" stroke="#8a9a5a" stroke-width="1.2" fill="none"/>
-      <ellipse cx="45" cy="85" rx="9" ry="4" fill="#a0b060" transform="rotate(-40 45 85)"/>
-      <ellipse cx="95" cy="180" rx="9" ry="4" fill="#a0b060" transform="rotate(30 95 180)"/>
-      <ellipse cx="165" cy="295" rx="8" ry="4" fill="#a0b060" transform="rotate(-25 165 295)"/>
-      <ellipse cx="190" cy="340" rx="7" ry="3.5" fill="#a0b060" transform="rotate(50 190 340)"/>
-      <use href="#mogra-lg" transform="translate(25,35)"/>
-      <use href="#mogra-md" transform="translate(62,122) rotate(22)"/>
-      <use href="#mogra-lg" transform="translate(22,157) rotate(-10)"/>
-      <use href="#mogra-md" transform="translate(100,96) rotate(15)"/>
-      <use href="#mogra-lg" transform="translate(83,270) rotate(5)"/>
-      <use href="#mogra-sm" transform="translate(170,210) rotate(-18)"/>
-      <use href="#mogra-lg" transform="translate(133,243) rotate(30)"/>
-      <use href="#mogra-md" transform="translate(202,363) rotate(-8)"/>
-      <use href="#mogra-sm" transform="translate(256,330) rotate(12)"/>
-      <use href="#mogra-bud" transform="translate(48,60)"/>
-      <use href="#mogra-bud" transform="translate(112,200) rotate(20)"/>
-      <use href="#mogra-bud" transform="translate(178,320) rotate(-15)"/>
-    </g>
-
-    <!-- ══ TOP-RIGHT: Mogra vine cascade ══ -->
-    <g opacity="0.28">
-      <path d="M1450,0 Q1410,70 1380,140 Q1350,210 1310,270 Q1270,330 1240,390" stroke="#8a9a5a" stroke-width="2" fill="none"/>
-      <path d="M1380,140 Q1405,158 1425,170" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M1310,270 Q1340,280 1360,298" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M1380,140 Q1358,125 1345,110" stroke="#8a9a5a" stroke-width="1.2" fill="none"/>
-      <ellipse cx="1400" cy="105" rx="9" ry="4" fill="#a0b060" transform="rotate(35 1400 105)"/>
-      <ellipse cx="1340" cy="225" rx="9" ry="4" fill="#a0b060" transform="rotate(-30 1340 225)"/>
-      <ellipse cx="1268" cy="350" rx="8" ry="4" fill="#a0b060" transform="rotate(20 1268 350)"/>
-      <use href="#mogra-lg" transform="translate(1418,42)"/>
-      <use href="#mogra-md" transform="translate(1378,143) rotate(-18)"/>
-      <use href="#mogra-lg" transform="translate(1425,170) rotate(10)"/>
-      <use href="#mogra-md" transform="translate(1345,112) rotate(-5)"/>
-      <use href="#mogra-lg" transform="translate(1312,272) rotate(22)"/>
-      <use href="#mogra-md" transform="translate(1360,298) rotate(-12)"/>
-      <use href="#mogra-lg" transform="translate(1242,393) rotate(8)"/>
-      <use href="#mogra-sm" transform="translate(1390,220) rotate(-20)"/>
-      <use href="#mogra-bud" transform="translate(1405,60) rotate(15)"/>
-      <use href="#mogra-bud" transform="translate(1325,185) rotate(-10)"/>
-    </g>
-
-    <!-- ══ BOTTOM-LEFT: Mogra garland on stems ══ -->
-    <g opacity="0.30">
-      <line x1="40" y1="900" x2="40" y2="790" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="85" y1="900" x2="85" y2="778" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="135" y1="900" x2="135" y2="795" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="180" y1="900" x2="180" y2="808" stroke="#8a9a5a" stroke-width="1.8"/>
-      <line x1="225" y1="900" x2="225" y2="818" stroke="#8a9a5a" stroke-width="1.8"/>
-      <line x1="268" y1="900" x2="268" y2="830" stroke="#8a9a5a" stroke-width="1.6"/>
-      <path d="M40,810 Q62,790 85,795 Q110,800 135,805 Q157,810 180,820 Q202,830 225,828 Q246,826 268,835" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <ellipse cx="58" cy="852" rx="12" ry="5" fill="#a0b060" transform="rotate(-35 58 852)"/>
-      <ellipse cx="108" cy="840" rx="11" ry="4.5" fill="#a0b060" transform="rotate(28 108 840)"/>
-      <ellipse cx="158" cy="855" rx="11" ry="4.5" fill="#a0b060" transform="rotate(-22 158 855)"/>
-      <ellipse cx="203" cy="865" rx="10" ry="4" fill="#a0b060" transform="rotate(40 203 865)"/>
-      <use href="#mogra-lg" transform="translate(40,788)"/>
-      <use href="#mogra-lg" transform="translate(85,776) rotate(18)"/>
-      <use href="#mogra-md" transform="translate(135,793) rotate(-10)"/>
-      <use href="#mogra-md" transform="translate(180,806) rotate(8)"/>
-      <use href="#mogra-sm" transform="translate(225,816) rotate(-5)"/>
-      <use href="#mogra-sm" transform="translate(268,828) rotate(14)"/>
-      <use href="#mogra-sm" transform="translate(62,790) rotate(10)"/>
-      <use href="#mogra-sm" transform="translate(110,797) rotate(-8)"/>
-      <use href="#mogra-sm" transform="translate(157,806) rotate(20)"/>
-      <use href="#mogra-sm" transform="translate(202,818) rotate(-12)"/>
-      <use href="#mogra-sm" transform="translate(246,824) rotate(6)"/>
-      <use href="#mogra-bud" transform="translate(50,815) rotate(-5)"/>
-      <use href="#mogra-bud" transform="translate(148,820) rotate(10)"/>
-      <use href="#mogra-bud" transform="translate(238,840) rotate(-8)"/>
-    </g>
-
-    <!-- ══ BOTTOM-RIGHT: Mogra garland on stems ══ -->
-    <g opacity="0.27">
-      <line x1="1220" y1="900" x2="1220" y2="818" stroke="#8a9a5a" stroke-width="1.8"/>
-      <line x1="1265" y1="900" x2="1265" y2="805" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="1310" y1="900" x2="1310" y2="795" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="1355" y1="900" x2="1355" y2="808" stroke="#8a9a5a" stroke-width="2"/>
-      <line x1="1400" y1="900" x2="1400" y2="820" stroke="#8a9a5a" stroke-width="1.8"/>
-      <line x1="1435" y1="900" x2="1435" y2="835" stroke="#8a9a5a" stroke-width="1.6"/>
-      <path d="M1220,828 Q1242,810 1265,815 Q1287,820 1310,812 Q1332,804 1355,812 Q1377,820 1400,822 Q1417,824 1435,838" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <ellipse cx="1242" cy="862" rx="11" ry="4.5" fill="#a0b060" transform="rotate(32 1242 862)"/>
-      <ellipse cx="1288" cy="850" rx="11" ry="4.5" fill="#a0b060" transform="rotate(-28 1288 850)"/>
-      <ellipse cx="1332" cy="858" rx="10" ry="4" fill="#a0b060" transform="rotate(22 1332 858)"/>
-      <ellipse cx="1378" cy="865" rx="10" ry="4" fill="#a0b060" transform="rotate(-38 1378 865)"/>
-      <use href="#mogra-md" transform="translate(1220,816) rotate(5)"/>
-      <use href="#mogra-lg" transform="translate(1265,803) rotate(-12)"/>
-      <use href="#mogra-lg" transform="translate(1310,793) rotate(20)"/>
-      <use href="#mogra-md" transform="translate(1355,806) rotate(-8)"/>
-      <use href="#mogra-md" transform="translate(1400,818) rotate(14)"/>
-      <use href="#mogra-sm" transform="translate(1435,833) rotate(-5)"/>
-      <use href="#mogra-sm" transform="translate(1243,812) rotate(-10)"/>
-      <use href="#mogra-sm" transform="translate(1288,816) rotate(15)"/>
-      <use href="#mogra-sm" transform="translate(1332,808) rotate(-6)"/>
-      <use href="#mogra-sm" transform="translate(1378,816) rotate(18)"/>
-      <use href="#mogra-bud" transform="translate(1278,825) rotate(8)"/>
-      <use href="#mogra-bud" transform="translate(1368,828) rotate(-10)"/>
-    </g>
-
-    <!-- ══ MID-LEFT: Small mogra cluster ══ -->
-    <g opacity="0.24">
-      <path d="M0,420 Q25,400 45,380 Q65,360 55,335" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M45,380 Q20,372 8,360" stroke="#8a9a5a" stroke-width="1.2" fill="none"/>
-      <ellipse cx="28" cy="398" rx="8" ry="3.5" fill="#a0b060" transform="rotate(-30 28 398)"/>
-      <use href="#mogra-md" transform="translate(0,420)"/>
-      <use href="#mogra-lg" transform="translate(46,380) rotate(15)"/>
-      <use href="#mogra-sm" transform="translate(55,335) rotate(-8)"/>
-      <use href="#mogra-sm" transform="translate(8,360) rotate(20)"/>
-      <use href="#mogra-bud" transform="translate(30,350) rotate(-12)"/>
-    </g>
-
-    <!-- ══ MID-RIGHT: Small mogra cluster ══ -->
-    <g opacity="0.24">
-      <path d="M1440,430 Q1415,410 1395,388 Q1375,366 1385,340" stroke="#8a9a5a" stroke-width="1.5" fill="none"/>
-      <path d="M1395,388 Q1420,378 1432,365" stroke="#8a9a5a" stroke-width="1.2" fill="none"/>
-      <ellipse cx="1412" cy="406" rx="8" ry="3.5" fill="#a0b060" transform="rotate(28 1412 406)"/>
-      <use href="#mogra-md" transform="translate(1440,430)"/>
-      <use href="#mogra-lg" transform="translate(1394,388) rotate(-14)"/>
-      <use href="#mogra-sm" transform="translate(1385,340) rotate(10)"/>
-      <use href="#mogra-sm" transform="translate(1432,365) rotate(-18)"/>
-      <use href="#mogra-bud" transform="translate(1410,355) rotate(8)"/>
-    </g>
-
-    <!-- ══ SCATTERED floating mogra flowers ══ -->
-    <g opacity="0.18">
-      <use href="#mogra-sm" transform="translate(340,185) rotate(22)"/>
-      <use href="#mogra-sm" transform="translate(520,310) rotate(-15)"/>
-      <use href="#mogra-md" transform="translate(680,420) rotate(30)"/>
-      <use href="#mogra-sm" transform="translate(820,250) rotate(-8)"/>
-      <use href="#mogra-sm" transform="translate(960,500) rotate(18)"/>
-      <use href="#mogra-md" transform="translate(1080,350) rotate(-25)"/>
-      <use href="#mogra-sm" transform="translate(430,580) rotate(10)"/>
-      <use href="#mogra-sm" transform="translate(760,650) rotate(-20)"/>
-      <use href="#mogra-sm" transform="translate(1150,620) rotate(35)"/>
-      <use href="#mogra-sm" transform="translate(580,760) rotate(-12)"/>
-      <!-- Drifting petals (warm white) -->
-      <ellipse cx="370" cy="450" rx="7" ry="3" fill="white" opacity="0.7" transform="rotate(40 370 450)"/>
-      <ellipse cx="900" cy="380" rx="6" ry="2.5" fill="white" opacity="0.7" transform="rotate(-28 900 380)"/>
-      <ellipse cx="650" cy="700" rx="7" ry="3" fill="white" opacity="0.7" transform="rotate(55 650 700)"/>
-      <ellipse cx="1200" cy="480" rx="6" ry="2.5" fill="white" opacity="0.7" transform="rotate(-18 1200 480)"/>
-      <ellipse cx="480" cy="840" rx="6" ry="2.5" fill="white" opacity="0.7" transform="rotate(32 480 840)"/>
-      <ellipse cx="1060" cy="760" rx="7" ry="3" fill="white" opacity="0.7" transform="rotate(-42 1060 760)"/>
-    </g>
-  </svg>
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#f5e8d0"/><stop offset="55%" stop-color="#faf0dc"/><stop offset="100%" stop-color="#e8d4a8"/>
+  </linearGradient>
+  <linearGradient id="grassg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#6aaa48"/><stop offset="100%" stop-color="#4a8830"/>
+  </linearGradient>
+  <linearGradient id="grassg2" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#58962a"/><stop offset="100%" stop-color="#3a7018"/>
+  </linearGradient>
+  <radialGradient id="sung" cx="50%" cy="0%" r="40%">
+    <stop offset="0%" stop-color="#ffeeb0" stop-opacity="0.6"/>
+    <stop offset="100%" stop-color="#ffeeb0" stop-opacity="0"/>
+  </radialGradient>
+  <g id="mog-lg">
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(0)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(45)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(90)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(135)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(180)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(225)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(270)"/>
+    <ellipse rx="11" ry="5" fill="white" opacity="0.96" transform="rotate(315)"/>
+    <circle r="5" fill="#f5e060"/><circle r="3" fill="#e8c820"/>
+  </g>
+  <g id="mog-md">
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(0)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(45)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(90)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(135)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(180)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(225)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(270)"/>
+    <ellipse rx="8" ry="3.5" fill="white" opacity="0.96" transform="rotate(315)"/>
+    <circle r="3.5" fill="#f5e060"/><circle r="2" fill="#e8c820"/>
+  </g>
+  <g id="mog-sm">
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(0)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(45)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(90)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(135)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(180)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(225)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(270)"/>
+    <ellipse rx="5.5" ry="2.5" fill="white" opacity="0.92" transform="rotate(315)"/>
+    <circle r="2.5" fill="#f5e060"/><circle r="1.4" fill="#e8c820"/>
+  </g>
+  <g id="mog-bud"><ellipse rx="3.5" ry="6.5" fill="white" opacity="0.85"/><ellipse rx="1.8" ry="3.5" fill="#b8d880" opacity="0.7"/></g>
+</defs>
+<rect width="1440" height="900" fill="url(#skyg)"/>
+<rect width="1440" height="900" fill="url(#sung)"/>
+<g opacity="0.35" fill="#fffbf0">
+  <ellipse cx="280" cy="110" rx="110" ry="38"/><ellipse cx="180" cy="118" rx="75" ry="30"/>
+  <ellipse cx="370" cy="105" rx="80" ry="28"/><ellipse cx="900" cy="85" rx="120" ry="40"/>
+  <ellipse cx="800" cy="92" rx="80" ry="30"/><ellipse cx="1010" cy="88" rx="90" ry="32"/>
+  <ellipse cx="1300" cy="120" rx="100" ry="36"/><ellipse cx="1200" cy="128" rx="70" ry="28"/>
+</g>
+<g opacity="0.15">
+  <ellipse cx="100" cy="580" rx="70" ry="95" fill="#4a7a28"/><ellipse cx="55" cy="600" rx="50" ry="75" fill="#3a6820"/>
+  <ellipse cx="320" cy="570" rx="80" ry="105" fill="#4a7a28"/><ellipse cx="270" cy="588" rx="55" ry="80" fill="#3a6820"/>
+  <ellipse cx="1160" cy="575" rx="75" ry="100" fill="#4a7a28"/><ellipse cx="1110" cy="590" rx="55" ry="80" fill="#3a6820"/>
+  <ellipse cx="1360" cy="568" rx="80" ry="108" fill="#4a7a28"/><ellipse cx="1310" cy="582" rx="58" ry="82" fill="#3a6820"/>
+</g>
+<path d="M0,660 Q360,630 720,645 Q1080,660 1440,655 L1440,900 L0,900Z" fill="url(#grassg2)" opacity="0.9"/>
+<path d="M0,720 Q360,700 720,710 Q1080,720 1440,718 L1440,900 L0,900Z" fill="url(#grassg)"/>
+<path d="M640,900 Q665,830 675,760 Q685,690 705,660 Q720,630 730,600" stroke="#c8a878" stroke-width="55" fill="none" opacity="0.22" stroke-linecap="round"/>
+<!-- Left mogra bush -->
+<g opacity="0.32">
+  <ellipse cx="155" cy="750" rx="60" ry="48" fill="#5a9038" opacity="0.85"/>
+  <ellipse cx="140" cy="738" rx="45" ry="38" fill="#68a840" opacity="0.75"/>
+  <ellipse cx="172" cy="742" rx="42" ry="35" fill="#60a038" opacity="0.7"/>
+  <ellipse cx="155" cy="728" rx="38" ry="28" fill="#72b848" opacity="0.65"/>
+  <line x1="155" y1="790" x2="155" y2="820" stroke="#4a6020" stroke-width="4"/>
+  <use href="#mog-lg" transform="translate(130,730)"/>
+  <use href="#mog-md" transform="translate(155,718) rotate(20)"/>
+  <use href="#mog-lg" transform="translate(178,726) rotate(-10)"/>
+  <use href="#mog-sm" transform="translate(142,742) rotate(15)"/>
+  <use href="#mog-md" transform="translate(168,738) rotate(-18)"/>
+  <use href="#mog-bud" transform="translate(122,722) rotate(-5)"/>
+  <use href="#mog-bud" transform="translate(190,720) rotate(10)"/>
+  <!-- Marigolds -->
+  <circle cx="88" cy="768" r="8" fill="#e87820" opacity="0.85"/>
+  <circle cx="88" cy="768" r="4" fill="#f5a030" opacity="0.85"/>
+  <circle cx="260" cy="770" r="7" fill="#e86020" opacity="0.85"/>
+  <circle cx="260" cy="770" r="3.5" fill="#f58020" opacity="0.85"/>
+</g>
+<!-- Right mogra bush -->
+<g opacity="0.30">
+  <ellipse cx="1285" cy="750" rx="62" ry="50" fill="#5a9038" opacity="0.85"/>
+  <ellipse cx="1268" cy="737" rx="46" ry="38" fill="#68a840" opacity="0.75"/>
+  <ellipse cx="1302" cy="742" rx="44" ry="36" fill="#60a038" opacity="0.7"/>
+  <ellipse cx="1285" cy="726" rx="40" ry="30" fill="#72b848" opacity="0.65"/>
+  <line x1="1285" y1="792" x2="1285" y2="820" stroke="#4a6020" stroke-width="4"/>
+  <use href="#mog-lg" transform="translate(1260,730)"/>
+  <use href="#mog-md" transform="translate(1285,716) rotate(-18)"/>
+  <use href="#mog-lg" transform="translate(1308,728) rotate(12)"/>
+  <use href="#mog-sm" transform="translate(1272,742) rotate(-10)"/>
+  <use href="#mog-md" transform="translate(1298,738) rotate(20)"/>
+  <use href="#mog-bud" transform="translate(1250,723) rotate(8)"/>
+  <use href="#mog-bud" transform="translate(1320,722) rotate(-12)"/>
+  <circle cx="1130" cy="768" r="8" fill="#e87820" opacity="0.85"/>
+  <circle cx="1130" cy="768" r="4" fill="#f5a030" opacity="0.85"/>
+  <circle cx="1370" cy="770" r="7" fill="#e86020" opacity="0.85"/>
+  <circle cx="1370" cy="770" r="3.5" fill="#f58020" opacity="0.85"/>
+</g>
+<!-- Vines -->
+<g opacity="0.28">
+  <path d="M0,30 Q50,80 80,150 Q110,220 100,300" stroke="#7a9848" stroke-width="2" fill="none"/>
+  <ellipse cx="45" cy="85" rx="10" ry="4.5" fill="#90b050" transform="rotate(-38 45 85)"/>
+  <ellipse cx="92" cy="225" rx="10" ry="4.5" fill="#90b050" transform="rotate(28 92 225)"/>
+  <use href="#mog-lg" transform="translate(28,45)"/>
+  <use href="#mog-md" transform="translate(82,152) rotate(18)"/>
+  <use href="#mog-lg" transform="translate(102,300) rotate(5)"/>
+  <use href="#mog-bud" transform="translate(60,88)"/>
+</g>
+<g opacity="0.26">
+  <path d="M1440,40 Q1390,90 1360,160 Q1330,230 1345,310" stroke="#7a9848" stroke-width="2" fill="none"/>
+  <ellipse cx="1390" cy="125" rx="10" ry="4.5" fill="#90b050" transform="rotate(35 1390 125)"/>
+  <use href="#mog-lg" transform="translate(1416,55)"/>
+  <use href="#mog-md" transform="translate(1360,162) rotate(-16)"/>
+  <use href="#mog-lg" transform="translate(1346,312) rotate(18)"/>
+  <use href="#mog-bud" transform="translate(1400,95) rotate(12)"/>
+</g>
+<!-- Garland -->
+<g opacity="0.30">
+  <path d="M80,820 Q360,800 720,808 Q1080,816 1360,812" stroke="#7a9848" stroke-width="1.8" fill="none"/>
+  <use href="#mog-sm" transform="translate(120,812) rotate(10)"/>
+  <use href="#mog-md" transform="translate(280,800) rotate(14)"/>
+  <use href="#mog-sm" transform="translate(440,802) rotate(18)"/>
+  <use href="#mog-md" transform="translate(600,806) rotate(-12)"/>
+  <use href="#mog-sm" transform="translate(760,808) rotate(10)"/>
+  <use href="#mog-md" transform="translate(920,804) rotate(-7)"/>
+  <use href="#mog-sm" transform="translate(1080,808) rotate(8)"/>
+  <use href="#mog-md" transform="translate(1240,810) rotate(12)"/>
+</g>
+<!-- Butterflies -->
+<g opacity="0.5">
+  <ellipse cx="340" cy="320" rx="18" ry="10" fill="#e8a030" transform="rotate(-22 340 320)"/>
+  <ellipse cx="316" cy="333" rx="12" ry="7" fill="#e8a030" opacity="0.65" transform="rotate(28 316 333)"/>
+  <ellipse cx="364" cy="320" rx="18" ry="10" fill="#f0c050" transform="rotate(22 364 320)"/>
+  <ellipse cx="388" cy="333" rx="12" ry="7" fill="#f0c050" opacity="0.65" transform="rotate(-28 388 333)"/>
+  <line x1="352" y1="318" x2="352" y2="336" stroke="#a06020" stroke-width="1.5"/>
+  <ellipse cx="1100" cy="420" rx="16" ry="9" fill="#c090e0" transform="rotate(-18 1100 420)"/>
+  <ellipse cx="1078" cy="432" rx="11" ry="6.5" fill="#c090e0" opacity="0.65" transform="rotate(24 1078 432)"/>
+  <ellipse cx="1122" cy="420" rx="16" ry="9" fill="#d8b0f0" transform="rotate(18 1122 420)"/>
+  <ellipse cx="1144" cy="432" rx="11" ry="6.5" fill="#d8b0f0" opacity="0.65" transform="rotate(-24 1144 432)"/>
+  <line x1="1111" y1="418" x2="1111" y2="434" stroke="#8850b0" stroke-width="1.5"/>
+</g>
+</svg>
 </div>
-
-<header>
-  <div class="logo-blossom">
-    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(0 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(45 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(90 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(135 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(180 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(225 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(270 18 18)"/>
-      <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(315 18 18)"/>
-      <circle cx="18" cy="18" r="5" fill="#f5e060"/>
-      <circle cx="18" cy="18" r="3" fill="#e8c820"/>
-    </svg>
-  </div>
-  <h1>Aishu's <em>Focus Garden</em></h1>
-  <p>breathe · study · walk · rest · repeat</p>
-</header>
-
-<div class="layout">
-
-  <!-- Left: Chai panel -->
-  <aside class="chai-panel">
-    <div class="chai-card">
-      <div class="chai-heading">
-        ☕ Adrak Chai
-      </div>
-
-      <!-- Animated chai cup SVG -->
-      <div class="chai-cup">
-        <svg width="100" height="110" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Steam -->
-          <g>
-            <path class="steam-line" d="M35,28 Q31,20 35,12 Q39,4 35,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path class="steam-line" d="M50,26 Q46,18 50,10 Q54,2 50,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            <path class="steam-line" d="M65,28 Q61,20 65,12 Q69,4 65,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-          </g>
-          <!-- Saucer -->
-          <ellipse cx="50" cy="98" rx="38" ry="8" fill="#e8d5c0"/>
-          <ellipse cx="50" cy="96" rx="38" ry="8" fill="#f0e0cc"/>
-          <!-- Cup body -->
-          <path d="M18,42 L24,88 Q24,92 50,92 Q76,92 76,88 L82,42 Z" fill="#d4957a"/>
-          <path d="M18,42 L82,42" stroke="#c07a5a" stroke-width="1"/>
-          <!-- Cup rim -->
-          <ellipse cx="50" cy="42" rx="32" ry="8" fill="#e0a882"/>
-          <!-- Tea surface -->
-          <ellipse cx="50" cy="42" rx="28" ry="6" fill="#a0522d" opacity="0.7"/>
-          <!-- Handle -->
-          <path d="M76,52 Q95,52 95,65 Q95,78 76,78" stroke="#c07a5a" stroke-width="6" fill="none" stroke-linecap="round"/>
-          <!-- Saucer shine -->
-          <ellipse cx="38" cy="94" rx="8" ry="2" fill="white" opacity="0.2"/>
-          <!-- Ginger slice hint on rim -->
-          <ellipse cx="34" cy="40" rx="6" ry="3" fill="#e8c060" opacity="0.8" transform="rotate(-20 34 40)"/>
-          <line x1="34" y1="38" x2="34" y2="43" stroke="#c09020" stroke-width="0.5" opacity="0.6"/>
-        </svg>
-      </div>
-
-      <div class="chai-affirmation" id="chai-quote">"Each breath clears space for your best thinking."</div>
-
-      <div class="chai-recipe-toggle" onclick="toggleRecipe()">🌿 adrak chai recipe ↓</div>
-      <div class="chai-recipe" id="chai-recipe">
-        <h4>Ingredients (1 cup)</h4>
-        <ul>
-          <li>1 cup water</li>
-          <li>½ cup whole milk</li>
-          <li>1 tsp CTC tea / 2 tsp loose leaf</li>
-          <li>1-inch fresh ginger, grated</li>
-          <li>1 tsp jaggery or sugar</li>
-          <li>Pinch of black pepper</li>
-        </ul>
-        <h4 style="margin-top:0.6rem">Method</h4>
-        <ul>
-          <li>Boil water with ginger</li>
-          <li>Add tea, simmer 2 min</li>
-          <li>Pour in milk, bring to boil</li>
-          <li>Sweeten, strain & sip slowly ☕</li>
-        </ul>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Center: Timer -->
-  <main class="timer-card" role="main">
-    <div class="phase-strip" id="phase-strip">
-      <button class="phase-pill active" data-phase="0" onclick="jumpPhase(0)">🌬 Pranayama</button>
-      <button class="phase-pill" data-phase="1" onclick="jumpPhase(1)">📖 Study</button>
-      <button class="phase-pill" data-phase="2" onclick="jumpPhase(2)">🚶 Walk</button>
-      <button class="phase-pill" data-phase="3" onclick="jumpPhase(3)">😮‍💨 Rest</button>
-    </div>
-
-    <div class="phase-display">
-      <span class="phase-emoji" id="p-emoji">🌬</span>
-      <div class="phase-label-text" id="p-name">Nadi Shodhan Pranayama</div>
-      <div class="phase-meta">Phase <span id="p-num">1</span> of 4 · <span id="p-dur">5 min</span></div>
-    </div>
-
-    <div class="ring-container">
-      <svg width="200" height="200" viewBox="0 0 200 200">
-        <circle class="ring-bg-track" cx="100" cy="100" r="90"/>
-        <circle class="ring-progress" id="ring" cx="100" cy="100" r="90" stroke="#8aab8a"/>
-      </svg>
-      <div class="time-center">
-        <div class="time-big" id="time-disp">05:00</div>
-        <div class="time-sub">remaining</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button class="btn btn-main" id="btn-play" onclick="toggleTimer()">▶ Start</button>
-      <button class="btn" onclick="resetPhase()">↺ Reset</button>
-      <button class="btn" onclick="skipPhase()">⏭ Skip</button>
-    </div>
-
-    <div class="segment-track" id="seg-track">
-      <div class="seg seg-current" id="seg0"><span class="seg-icon">🌬</span><span class="seg-name">Pranayama</span><span class="seg-dur">5 min</span></div>
-      <div class="seg" id="seg1"><span class="seg-icon">📖</span><span class="seg-name">Study</span><span class="seg-dur">40 min</span></div>
-      <div class="seg" id="seg2"><span class="seg-icon">🚶</span><span class="seg-name">Walk</span><span class="seg-dur">10 min</span></div>
-      <div class="seg" id="seg3"><span class="seg-icon">😮‍💨</span><span class="seg-name">Rest</span><span class="seg-dur">5 min</span></div>
-    </div>
-
-    <div class="cycle-badge">Cycle <span id="cycle-num">1</span> · 60 min per cycle</div>
-
-    <div class="snd-row" onclick="toggleSound()" id="snd-row">🔔 Sound on</div>
-  </main>
-
-  <!-- Right: Phase guide -->
-  <aside class="phase-guide">
-    <div class="guide-card">
-      <div class="guide-heading">Your cycle</div>
-
-      <div class="guide-item">
-        <div class="guide-dot g0">🌬</div>
-        <div class="guide-text">
-          <span>5 min</span>
-          <h4>Nadi Shodhan</h4>
-          <p>Alternate nostril breathing. Balances the nervous system and clears the mind before study.</p>
-        </div>
-      </div>
-
-      <div class="guide-item">
-        <div class="guide-dot g1">📖</div>
-        <div class="guide-text">
-          <span>40 min</span>
-          <h4>Deep study</h4>
-          <p>Full focus block. Ideal for reading papers, writing, or coding. No distractions.</p>
-        </div>
-      </div>
-
-      <div class="guide-item">
-        <div class="guide-dot g2">🚶</div>
-        <div class="guide-text">
-          <span>10 min</span>
-          <h4>Walking break</h4>
-          <p>Step outside. Movement consolidates memory and resets attentional capacity.</p>
-        </div>
-      </div>
-
-      <div class="guide-item">
-        <div class="guide-dot g3">😮‍💨</div>
-        <div class="guide-text">
-          <span>5 min</span>
-          <h4>Rest</h4>
-          <p>Eyes closed, no phone. Let the mind wander — this is when insights arrive.</p>
-        </div>
-      </div>
-
-    </div>
-  </aside>
-
-</div>
-
-<footer>
-  <em>tend your mind like a garden — water it, let it breathe, give it sunlight</em>
-</footer>
 
 <canvas id="mogra-canvas"></canvas>
 
+<div class="page">
+  <header>
+    <div class="logo-blossom">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(0 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(45 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(90 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(135 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(180 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(225 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(270 18 18)"/>
+        <ellipse cx="18" cy="18" rx="10" ry="4.5" fill="white" opacity="0.95" transform="rotate(315 18 18)"/>
+        <circle cx="18" cy="18" r="5" fill="#f5e060"/><circle cx="18" cy="18" r="3" fill="#e8c820"/>
+      </svg>
+    </div>
+    <h1>Aishu's <em>Focus Garden</em></h1>
+    <p>breathe · study · walk · rest · repeat</p>
+  </header>
+
+  <div class="content">
+
+    <!-- Chai panel -->
+    <div class="chai-panel">
+      <div class="card-shell side-card">
+        <div class="collapsible-header" onclick="toggleSection(this)">
+          <span class="collapsible-title">☕ Adrak Chai</span>
+          <span class="c-arrow">▼</span>
+        </div>
+        <div class="collapsible-body">
+          <div class="chai-cup">
+            <svg width="88" height="98" viewBox="0 0 100 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path class="steam-line" d="M35,28 Q31,20 35,12 Q39,4 35,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path class="steam-line" d="M50,26 Q46,18 50,10 Q54,2 50,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <path class="steam-line" d="M65,28 Q61,20 65,12 Q69,4 65,0" stroke="#c8a882" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              </g>
+              <ellipse cx="50" cy="98" rx="38" ry="8" fill="#e8d5c0"/>
+              <ellipse cx="50" cy="96" rx="38" ry="8" fill="#f0e0cc"/>
+              <path d="M18,42 L24,88 Q24,92 50,92 Q76,92 76,88 L82,42 Z" fill="#d4957a"/>
+              <path d="M18,42 L82,42" stroke="#c07a5a" stroke-width="1"/>
+              <ellipse cx="50" cy="42" rx="32" ry="8" fill="#e0a882"/>
+              <ellipse cx="50" cy="42" rx="28" ry="6" fill="#a0522d" opacity="0.7"/>
+              <path d="M76,52 Q95,52 95,65 Q95,78 76,78" stroke="#c07a5a" stroke-width="6" fill="none" stroke-linecap="round"/>
+              <ellipse cx="38" cy="94" rx="8" ry="2" fill="white" opacity="0.2"/>
+              <ellipse cx="34" cy="40" rx="6" ry="3" fill="#e8c060" opacity="0.8" transform="rotate(-20 34 40)"/>
+            </svg>
+          </div>
+          <div class="chai-affirmation" id="chai-quote">"Each breath clears space for your best thinking."</div>
+          <div class="chai-recipe-toggle" onclick="toggleRecipe()">🌿 adrak chai recipe ↓</div>
+          <div class="chai-recipe" id="chai-recipe">
+            <h4>Ingredients (1 cup)</h4>
+            <ul>
+              <li>1 cup water</li><li>½ cup whole milk</li>
+              <li>1 tsp CTC tea / 2 tsp loose leaf</li>
+              <li>1-inch fresh ginger, grated</li>
+              <li>1 tsp jaggery or sugar</li><li>Pinch of black pepper</li>
+            </ul>
+            <h4 style="margin-top:.5rem">Method</h4>
+            <ul>
+              <li>Boil water with ginger</li><li>Add tea, simmer 2 min</li>
+              <li>Pour in milk, bring to boil</li><li>Sweeten, strain & sip slowly ☕</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <main class="timer-card card-shell" role="main">
+      <div class="phase-strip" id="phase-strip">
+        <button class="phase-pill active" data-phase="0" onclick="jumpPhase(0)">🌬 Pranayama</button>
+        <button class="phase-pill" data-phase="1" onclick="jumpPhase(1)">📖 Study</button>
+        <button class="phase-pill" data-phase="2" onclick="jumpPhase(2)">🚶 Walk</button>
+        <button class="phase-pill" data-phase="3" onclick="jumpPhase(3)">😮‍💨 Rest</button>
+      </div>
+      <div class="phase-display">
+        <span class="phase-emoji" id="p-emoji">🌬</span>
+        <div class="phase-label-text" id="p-name">Nadi Shodhan Pranayama</div>
+        <div class="phase-meta">Phase <span id="p-num">1</span> of 4 · <span id="p-dur">5 min</span></div>
+      </div>
+      <div class="ring-container">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle class="ring-bg-track" cx="100" cy="100" r="90"/>
+          <circle class="ring-progress" id="ring" cx="100" cy="100" r="90" stroke="#c4845a"/>
+        </svg>
+        <div class="time-center">
+          <div class="time-big" id="time-disp">05:00</div>
+          <div class="time-sub">remaining</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-main" id="btn-play" onclick="toggleTimer()">▶ Start</button>
+        <button class="btn" onclick="resetPhase()">↺ Reset</button>
+        <button class="btn" onclick="skipPhase()">⏭ Skip</button>
+      </div>
+      <div class="segment-track" id="seg-track">
+        <div class="seg seg-current" id="seg0"><span class="seg-icon">🌬</span><span class="seg-name">Pranayama</span><span class="seg-dur">5 min</span></div>
+        <div class="seg" id="seg1"><span class="seg-icon">📖</span><span class="seg-name">Study</span><span class="seg-dur">40 min</span></div>
+        <div class="seg" id="seg2"><span class="seg-icon">🚶</span><span class="seg-name">Walk</span><span class="seg-dur">10 min</span></div>
+        <div class="seg" id="seg3"><span class="seg-icon">😮‍💨</span><span class="seg-name">Rest</span><span class="seg-dur">5 min</span></div>
+      </div>
+      <div class="cycle-badge">Cycle <span id="cycle-num">1</span> · 60 min per cycle</div>
+      <div class="snd-row" onclick="toggleSound()" id="snd-row">🔔 Sound on</div>
+    </main>
+
+    <!-- Phase guide -->
+    <div class="phase-guide">
+      <div class="card-shell side-card">
+        <div class="collapsible-header" onclick="toggleSection(this)">
+          <span class="collapsible-title">🌿 Your cycle</span>
+          <span class="c-arrow">▼</span>
+        </div>
+        <div class="collapsible-body">
+          <div class="guide-item">
+            <div class="guide-dot g0">🌬</div>
+            <div class="guide-text"><span>5 min</span><h4>Nadi Shodhan</h4><p>Alternate nostril breathing. Balances the nervous system before study.</p></div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-dot g1">📖</div>
+            <div class="guide-text"><span>40 min</span><h4>Deep study</h4><p>Full focus block. Reading, writing, or coding — no distractions.</p></div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-dot g2">🚶</div>
+            <div class="guide-text"><span>10 min</span><h4>Walking break</h4><p>Movement consolidates memory and resets attentional capacity.</p></div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-dot g3">😮‍💨</div>
+            <div class="guide-text"><span>5 min</span><h4>Rest</h4><p>Eyes closed, no phone. Let the mind wander — insights arrive here.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+
+  <footer>
+    <em>tend your mind like a garden — water it, let it breathe, give it sunlight</em>
+  </footer>
+</div><!-- .page -->
+
 <script>
-  const PHASES = [
-    { name:"Nadi Shodhan Pranayama", emoji:"🌬", mins:5, color:"#c4845a", key:0 },
-    { name:"Study session", emoji:"📖", mins:40, color:"#c8903a", key:1 },
-    { name:"Walking break", emoji:"🚶", mins:10, color:"#d4a830", key:2 },
-    { name:"Rest", emoji:"😮‍💨", mins:5, color:"#b85a3a", key:3 },
-  ];
-  const CIRC = 2 * Math.PI * 90;
-  const QUOTES = [
-    '"Each breath clears space for your best thinking."',
-    '"Sip slowly. The work will wait."',
-    '"Ginger sharpens the mind. So does stillness."',
-    '"This chai is proof that small rituals matter."',
-    '"Let the warmth anchor you to the present."',
-    '"Rest is not earned — it is essential."',
-  ];
+// ── Constants ──
+const PHASES = [
+  {name:"Nadi Shodhan Pranayama",emoji:"🌬",mins:5, color:"#c4845a"},
+  {name:"Study session",         emoji:"📖",mins:40,color:"#c8903a"},
+  {name:"Walking break",         emoji:"🚶",mins:10,color:"#d4a830"},
+  {name:"Rest",                  emoji:"😮‍💨",mins:5, color:"#b85a3a"},
+];
+const CIRC = 2*Math.PI*90;
+const QUOTES = [
+  '"Each breath clears space for your best thinking."',
+  '"Sip slowly. The work will wait."',
+  '"Ginger sharpens the mind. So does stillness."',
+  '"This chai is proof that small rituals matter."',
+  '"Let the warmth anchor you to the present."',
+  '"Rest is not earned — it is essential."',
+];
 
-  let phaseIdx = 0, cycle = 1, elapsed = 0, running = false, timer = null, soundOn = true;
+// ── State ──
+let phaseIdx=0,cycle=1,elapsed=0,running=false,soundOn=true;
+let deadlineAt=null,tickTimeout=null,_scheduledBellAt=null;
+function totalSecs(){return PHASES[phaseIdx].mins*60}
+function fmt(s){s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 
-  function totalSecs() { return PHASES[phaseIdx].mins * 60; }
+// ── Audio ──
+let _ac=null;
+function getAC(){
+  if(!_ac||_ac.state==='closed') _ac=new(window.AudioContext||window.webkitAudioContext)();
+  if(_ac.state==='suspended') _ac.resume();
+  return _ac;
+}
+function _bell(ac,freq,t0,dur,vol){
+  const o1=ac.createOscillator(),o2=ac.createOscillator(),o3=ac.createOscillator(),g=ac.createGain();
+  o1.connect(g);o2.connect(g);o3.connect(g);g.connect(ac.destination);
+  o1.type='sine';o1.frequency.value=freq;
+  o2.type='sine';o2.frequency.value=freq*2.76;
+  o3.type='triangle';o3.frequency.value=freq*5.4;
+  g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+0.005);
+  g.gain.exponentialRampToValueAtTime(vol*0.6,t0+0.08);
+  g.gain.exponentialRampToValueAtTime(vol*0.3,t0+0.4);
+  g.gain.exponentialRampToValueAtTime(0.001,t0+dur);
+  o1.start(t0);o1.stop(t0+dur+0.1);
+  o2.start(t0);o2.stop(t0+dur+0.1);
+  o3.start(t0);o3.stop(t0+dur+0.1);
+}
+function playStartSound(){if(!soundOn)return;try{const ac=getAC();_bell(ac,880,ac.currentTime,1.8,0.8)}catch(e){}}
+function scheduleCompleteSound(at){
+  if(!soundOn)return;
+  try{
+    const ac=getAC(),t=at,freq=740,vol=0.85,dur=0.5;
+    for(let i=0;i<10;i++) _bell(ac,freq,t+i*0.13,dur,vol);
+    for(let i=0;i<8;i++)  _bell(ac,freq,t+1.5+i*0.13,dur,vol*0.9);
+  }catch(e){}
+}
+function playCompleteSound(){if(!soundOn)return;try{scheduleCompleteSound(getAC().currentTime)}catch(e){}}
+function scheduleBellForDeadline(){
+  if(!soundOn||deadlineAt===null)return;
+  try{
+    const ac=getAC(),remMs=deadlineAt-Date.now();
+    if(remMs<=0)return;
+    const at=ac.currentTime+remMs/1000;
+    if(_scheduledBellAt!==null&&Math.abs(at-_scheduledBellAt)<0.5)return;
+    _scheduledBellAt=at;scheduleCompleteSound(at);
+  }catch(e){}
+}
 
-  function fmt(s) {
-    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+// ── UI ──
+function updateRing(){
+  const rem=Math.max(0,totalSecs()-elapsed),frac=rem/totalSecs();
+  document.getElementById('ring').style.strokeDashoffset=CIRC*(1-frac);
+  document.getElementById('ring').style.stroke=PHASES[phaseIdx].color;
+  document.getElementById('time-disp').textContent=fmt(rem);
+}
+function updateUI(){
+  const p=PHASES[phaseIdx];
+  document.getElementById('p-emoji').textContent=p.emoji;
+  document.getElementById('p-name').textContent=p.name;
+  document.getElementById('p-num').textContent=phaseIdx+1;
+  document.getElementById('p-dur').textContent=p.mins+' min';
+  document.getElementById('cycle-num').textContent=cycle;
+  document.querySelectorAll('.phase-pill').forEach((el,i)=>el.className='phase-pill'+(i===phaseIdx?' active':''));
+  for(let i=0;i<4;i++){
+    const s=document.getElementById('seg'+i);
+    s.className='seg';
+    if(i<phaseIdx) s.classList.add('seg-done-'+i);
+    if(i===phaseIdx) s.classList.add('seg-current');
   }
+  const q=document.getElementById('chai-quote');
+  q.style.opacity=0;
+  setTimeout(()=>{q.textContent=QUOTES[(phaseIdx+cycle)%QUOTES.length];q.style.opacity=1},400);
+}
 
-  function updateRing() {
-    const rem = totalSecs() - elapsed;
-    const frac = rem / totalSecs();
-    const ring = document.getElementById('ring');
-    ring.style.strokeDashoffset = CIRC * (1 - frac);
-    ring.style.stroke = PHASES[phaseIdx].color;
-    document.getElementById('time-disp').textContent = fmt(rem);
-  }
-
-  function updateUI() {
-    const p = PHASES[phaseIdx];
-    document.getElementById('p-emoji').textContent = p.emoji;
-    document.getElementById('p-name').textContent = p.name;
-    document.getElementById('p-num').textContent = phaseIdx + 1;
-    document.getElementById('p-dur').textContent = p.mins + ' min';
-    document.getElementById('cycle-num').textContent = cycle;
-    // pills
-    document.querySelectorAll('.phase-pill').forEach((el, i) => {
-      el.className = 'phase-pill' + (i === phaseIdx ? ' active' : '');
-    });
-    // segments
-    for (let i = 0; i < 4; i++) {
-      const seg = document.getElementById('seg'+i);
-      seg.className = 'seg';
-      if (i < phaseIdx) seg.classList.add('seg-done-'+i);
-      if (i === phaseIdx) seg.classList.add('seg-current');
-    }
-    // rotate quote each phase change
-    const q = document.getElementById('chai-quote');
-    q.style.opacity = 0;
-    setTimeout(() => {
-      q.textContent = QUOTES[(phaseIdx + cycle) % QUOTES.length];
-      q.style.opacity = 1;
-    }, 400);
-  }
-
-  function beep(freq, dur) {
-    if (!soundOn) return;
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-      osc.start(); osc.stop(ctx.currentTime + dur);
-    } catch(e) {}
-  }
-
-  function phaseComplete() {
-    beep(660, 0.3); setTimeout(()=>beep(880,0.4), 350); setTimeout(()=>beep(1100,0.5), 750);
-    phaseIdx = (phaseIdx + 1) % 4;
-    if (phaseIdx === 0) cycle++;
-    elapsed = 0;
-    running = false;
-    clearInterval(timer);
-    document.getElementById('btn-play').textContent = '▶ Start';
-    updateUI(); updateRing();
-  }
-
-  function toggleTimer() {
-    if (running) {
-      running = false; clearInterval(timer);
-      document.getElementById('btn-play').textContent = '▶ Resume';
-    } else {
-      running = true;
-      document.getElementById('btn-play').textContent = '⏸ Pause';
-      beep(440, 0.12);
-      timer = setInterval(() => {
-        elapsed++;
-        updateRing();
-        if (elapsed >= totalSecs()) { clearInterval(timer); phaseComplete(); }
-      }, 1000);
-    }
-  }
-
-  function resetPhase() {
-    running = false; clearInterval(timer); elapsed = 0;
-    document.getElementById('btn-play').textContent = '▶ Start';
+// ── Timer ──
+function stopTick(){clearTimeout(tickTimeout);tickTimeout=null}
+function tick(){
+  if(!running||deadlineAt===null)return;
+  const remMs=deadlineAt-Date.now();
+  elapsed=totalSecs()-remMs/1000;
+  if(remMs<=0){elapsed=totalSecs();updateRing();phaseComplete();return}
+  updateRing();
+  tickTimeout=setTimeout(tick,250);
+}
+function phaseComplete(){
+  stopTick();playCompleteSound();
+  phaseIdx=(phaseIdx+1)%4;
+  if(phaseIdx===0)cycle++;
+  elapsed=0;deadlineAt=null;running=false;_scheduledBellAt=null;
+  document.getElementById('btn-play').textContent='▶ Start';
+  updateUI();updateRing();
+}
+function toggleTimer(){
+  if(running){
+    elapsed=totalSecs()-Math.max(0,deadlineAt-Date.now())/1000;
+    deadlineAt=null;running=false;stopTick();_scheduledBellAt=null;
+    document.getElementById('btn-play').textContent='▶ Resume';
     updateRing();
+  }else{
+    running=true;
+    deadlineAt=Date.now()+Math.max(0,totalSecs()-elapsed)*1000;
+    document.getElementById('btn-play').textContent='⏸ Pause';
+    playStartSound();scheduleBellForDeadline();tick();
   }
+}
+function resetPhase(){stopTick();running=false;elapsed=0;deadlineAt=null;_scheduledBellAt=null;document.getElementById('btn-play').textContent='▶ Start';updateRing()}
+function skipPhase(){stopTick();running=false;elapsed=0;deadlineAt=null;_scheduledBellAt=null;phaseComplete()}
+function jumpPhase(i){stopTick();running=false;phaseIdx=i;elapsed=0;deadlineAt=null;_scheduledBellAt=null;document.getElementById('btn-play').textContent='▶ Start';updateUI();updateRing()}
+function toggleRecipe(){document.getElementById('chai-recipe').classList.toggle('open')}
+function toggleSound(){soundOn=!soundOn;document.getElementById('snd-row').textContent=soundOn?'🔔 Sound on':'🔕 Sound off'}
+function toggleSection(hdr){hdr.classList.toggle('open');hdr.nextElementSibling.classList.toggle('open')}
 
-  function skipPhase() {
-    running = false; clearInterval(timer);
-    elapsed = totalSecs() - 1;
-    phaseComplete();
+document.addEventListener('visibilitychange',()=>{
+  if(!running||!deadlineAt||document.hidden)return;
+  if(_ac&&_ac.state==='suspended')_ac.resume();
+  stopTick();
+  const remMs=deadlineAt-Date.now();
+  if(remMs<=0){elapsed=totalSecs();updateRing();phaseComplete()}
+  else{
+    elapsed=totalSecs()-remMs/1000;updateRing();
+    _scheduledBellAt=null;scheduleBellForDeadline();
+    tickTimeout=setTimeout(tick,250);
   }
+});
 
-  function jumpPhase(i) {
-    running = false; clearInterval(timer);
-    phaseIdx = i; elapsed = 0;
-    document.getElementById('btn-play').textContent = '▶ Start';
-    // mark prior as done
-    updateUI(); updateRing();
+updateRing();updateUI();
+
+// ── Falling Mogra canvas — with ground accumulation ──
+const canvas=document.getElementById('mogra-canvas');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize',()=>{resizeCanvas();settled.length=0});
+
+const PETAL='rgba(255,252,245,';
+const LEAF='rgba(140,160,75,';
+
+// Settled flowers on the ground
+const settled=[];
+const GROUND_Y=()=>canvas.height*0.88; // approximate grass line
+
+function drawMograAt(x,y,rot,size,alpha){
+  ctx.save();ctx.translate(x,y);ctx.rotate(rot);
+  const p=size,pw=size*0.45;
+  for(let i=0;i<8;i++){
+    ctx.save();ctx.rotate(i*Math.PI/4);
+    ctx.beginPath();ctx.ellipse(p*0.55,0,p,pw,0,0,Math.PI*2);
+    ctx.fillStyle=PETAL+alpha+')';ctx.fill();ctx.restore();
   }
+  ctx.beginPath();ctx.arc(0,0,size*0.45,0,Math.PI*2);
+  ctx.fillStyle='#f5e060';ctx.globalAlpha=alpha;ctx.fill();
+  ctx.beginPath();ctx.arc(0,0,size*0.26,0,Math.PI*2);
+  ctx.fillStyle='#e8c820';ctx.fill();
+  ctx.globalAlpha=1;ctx.restore();
+}
+function drawPetalAt(x,y,rot,size,alpha){
+  ctx.save();ctx.translate(x,y);ctx.rotate(rot);
+  ctx.beginPath();ctx.ellipse(0,0,size,size*0.4,0,0,Math.PI*2);
+  ctx.fillStyle=PETAL+alpha+')';ctx.fill();ctx.restore();
+}
+function drawLeafAt(x,y,rot,size,alpha){
+  ctx.save();ctx.translate(x,y);ctx.rotate(rot);
+  ctx.beginPath();ctx.ellipse(0,0,size,size*0.4,0,0,Math.PI*2);
+  ctx.fillStyle=LEAF+alpha+')';ctx.fill();ctx.restore();
+}
 
-  function toggleRecipe() {
-    const r = document.getElementById('chai-recipe');
-    r.classList.toggle('open');
+class Particle{
+  constructor(){this.reset(true)}
+  reset(initial=false){
+    this.x=Math.random()*canvas.width;
+    this.y=initial?Math.random()*canvas.height:-20;
+    const r=Math.random();
+    this.type=r<0.45?0:r<0.78?1:2;
+    this.size=this.type===0?6+Math.random()*10:this.type===1?4+Math.random()*6:5+Math.random()*7;
+    this.speedY=0.4+Math.random()*0.9;
+    this.speedX=(Math.random()-0.5)*0.5;
+    this.rot=Math.random()*Math.PI*2;
+    this.rotSpd=(Math.random()-0.5)*0.025;
+    this.alpha=0.28+Math.random()*0.52;
+    this.wob=Math.random()*Math.PI*2;
+    this.wobSpd=0.012+Math.random()*0.018;
+    this.wobAmp=0.4+Math.random()*0.9;
+    this.landed=false;
   }
-
-  function toggleSound() {
-    soundOn = !soundOn;
-    document.getElementById('snd-row').textContent = soundOn ? '🔔 Sound on' : '🔕 Sound off';
-  }
-
-  updateRing(); updateUI();
-
-  // ── Falling Mogra Live Wallpaper ──
-  const canvas = document.getElementById('mogra-canvas');
-  const ctx = canvas.getContext('2d');
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
-
-  const PETAL_COLOR = 'rgba(255,252,245,';
-  const CENTER_COLOR = '#f5e060';
-  const CENTER_INNER = '#e8c820';
-  const LEAF_COLOR = 'rgba(140,160,75,';
-
-  // Draw a single mogra flower at (0,0), caller does ctx.translate + ctx.rotate
-  function drawMogra(ctx, size, alpha) {
-    const p = size; // petal half-length
-    const pw = size * 0.45; // petal half-width
-    ctx.save();
-    // 8 petals
-    for (let i = 0; i < 8; i++) {
-      ctx.save();
-      ctx.rotate((i * Math.PI) / 4);
-      ctx.beginPath();
-      ctx.ellipse(p * 0.55, 0, p, pw, 0, 0, Math.PI * 2);
-      ctx.fillStyle = PETAL_COLOR + alpha + ')';
-      ctx.fill();
-      ctx.restore();
-    }
-    // yellow center
-    ctx.beginPath();
-    ctx.arc(0, 0, size * 0.45, 0, Math.PI * 2);
-    ctx.fillStyle = CENTER_COLOR;
-    ctx.globalAlpha = alpha;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, 0, size * 0.26, 0, Math.PI * 2);
-    ctx.fillStyle = CENTER_INNER;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
-
-  // Draw a tiny loose petal (single ellipse)
-  function drawPetal(ctx, size, alpha) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(0, 0, size, size * 0.4, 0, 0, Math.PI * 2);
-    ctx.fillStyle = PETAL_COLOR + alpha + ')';
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // Draw a tiny leaf
-  function drawLeaf(ctx, size, alpha) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(0, 0, size, size * 0.4, 0, 0, Math.PI * 2);
-    ctx.fillStyle = LEAF_COLOR + alpha + ')';
-    ctx.fill();
-    ctx.restore();
-  }
-
-  class Particle {
-    constructor() { this.reset(true); }
-    reset(initial = false) {
-      this.x = Math.random() * canvas.width;
-      this.y = initial ? Math.random() * canvas.height : -20;
-      // type: 0 = full mogra, 1 = loose petal, 2 = leaf
-      const r = Math.random();
-      this.type = r < 0.45 ? 0 : r < 0.78 ? 1 : 2;
-      this.size = this.type === 0
-        ? 6 + Math.random() * 10
-        : this.type === 1 ? 4 + Math.random() * 6
-        : 5 + Math.random() * 7;
-      this.speedY = 0.4 + Math.random() * 0.9;
-      this.speedX = (Math.random() - 0.5) * 0.5;
-      this.rot = Math.random() * Math.PI * 2;
-      this.rotSpeed = (Math.random() - 0.5) * 0.025;
-      this.alpha = 0.25 + Math.random() * 0.55;
-      this.wobble = Math.random() * Math.PI * 2;
-      this.wobbleSpeed = 0.012 + Math.random() * 0.018;
-      this.wobbleAmp = 0.4 + Math.random() * 0.9;
-    }
-    update() {
-      this.wobble += this.wobbleSpeed;
-      this.x += this.speedX + Math.sin(this.wobble) * this.wobbleAmp;
-      this.y += this.speedY;
-      this.rot += this.rotSpeed;
-      if (this.y > canvas.height + 30) this.reset();
-    }
-    draw() {
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.rot);
-      if (this.type === 0) drawMogra(ctx, this.size, this.alpha);
-      else if (this.type === 1) drawPetal(ctx, this.size, this.alpha);
-      else drawLeaf(ctx, this.size, this.alpha);
-      ctx.restore();
+  update(){
+    if(this.landed)return;
+    this.wob+=this.wobSpd;
+    this.x+=this.speedX+Math.sin(this.wob)*this.wobAmp;
+    this.y+=this.speedY;
+    this.rot+=this.rotSpd;
+    // Land on ground — only mogra flowers and petals settle
+    if(this.y>=GROUND_Y()-this.size*0.5 && this.type!==2){
+      this.y=GROUND_Y()-this.size*0.3;
+      this.landed=true;
+      // Add to settled pile (max 60 on ground at once)
+      if(settled.length<60) settled.push({x:this.x,y:this.y,rot:this.rot,size:this.size*0.9,type:this.type,alpha:this.alpha*0.7});
+      // Respawn from top after short delay
+      setTimeout(()=>this.reset(false),2000+Math.random()*4000);
+    }else if(this.y>canvas.height+30){
+      this.reset(false);
     }
   }
-
-  const PARTICLE_COUNT = 80;
-  const particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
-
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(animate);
+  draw(){
+    if(this.landed)return;
+    if(this.type===0) drawMograAt(this.x,this.y,this.rot,this.size,this.alpha);
+    else if(this.type===1) drawPetalAt(this.x,this.y,this.rot,this.size,this.alpha);
+    else drawLeafAt(this.x,this.y,this.rot,this.size,this.alpha);
   }
-  animate();
+}
+
+const particles=Array.from({length:80},()=>new Particle());
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // Draw settled flowers on ground first
+  settled.forEach(s=>{
+    if(s.type===0) drawMograAt(s.x,s.y,s.rot,s.size,s.alpha);
+    else drawPetalAt(s.x,s.y,s.rot,s.size,s.alpha);
+  });
+  // Draw falling particles
+  particles.forEach(p=>{p.update();p.draw()});
+  requestAnimationFrame(animate);
+}
+animate();
 </script>
 </body>
 </html>
